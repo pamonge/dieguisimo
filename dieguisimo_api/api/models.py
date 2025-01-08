@@ -15,7 +15,7 @@ class User (models.Model):
     lastname = models.CharField(max_length=100, verbose_name='apellido')
     phone = models.IntegerField(verbose_name='telefono')
     adress = models.CharField(max_length=150, blank=True, null=True, verbose_name='direccion')
-    picture = models.ImageField( blank=True, null=True, verbose_name='imagen')
+    picture = models.ImageField( blank=True, null=True, default='media/default-user.png', verbose_name='imagen')
     email = models.EmailField(blank=True, null=True, verbose_name='correo')
 
     def __str__(self):
@@ -45,7 +45,7 @@ class Tournament (models.Model):
         return self.name
 
 class Match (models.Model):
-    tournament_id = models.ForeignKey(Tournament, verbose_name='torneo')
+    tournament_id = models.ForeignKey(Tournament, on_delete=models.CASCADE, verbose_name='torneo')
     team_home = models.ForeignKey(Team, related_name='local', on_delete=models.CASCADE, verbose_name='equipo local')
     team_away = models.ForeignKey(Team, related_name='foreign', on_delete=models.CASCADE, verbose_name='equipo visitante')
     date = models.DateField(verbose_name='fecha del partido')
