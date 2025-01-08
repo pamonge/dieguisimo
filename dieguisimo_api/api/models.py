@@ -9,7 +9,7 @@ class User (models.Model):
             ('r', 'arbitro'),
         ]
 
-    user_id = models.IntegerField(max_length=8 ,verbose_name='dni')
+    user_id = models.IntegerField(verbose_name='dni')
     user_type = models.CharField(max_length=1, choices=user_type_choices, default='j', verbose_name='tipo de usuario')
     name = models.CharField(max_length=100, verbose_name='nombre')
     lastname = models.CharField(max_length=100, verbose_name='apellido')
@@ -39,7 +39,7 @@ class Tournament (models.Model):
     name = models.CharField(max_length=100, verbose_name='nombre del torneo', unique=True)
     start_date = models.DateField(verbose_name='fecha inicio')
     end_date = models.DateField(verbose_name='fecha fin')
-    organizer_id = models.ForeignKey(User, verbose_name='organizador')
+    organizer_id = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='organizador')
 
     def __str__(self):
         return self.name
@@ -55,6 +55,14 @@ class Match (models.Model):
     def __str__(self):
         return f'{self.team_home.name} vs {self.team_away.name} ({self.date})'
     
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=~models.Q(team_home=models.F('team_away')),
+                name='prevent_self_match'
+            ),
+        ]
+    
 class Score (models.Model):
     score_choices = [
         (3, 'w'),
@@ -63,7 +71,7 @@ class Score (models.Model):
     ]
     tournament = models.ForeignKey(Tournament, verbose_name='torneo')
     team_id = models.ForeignKey(Team, verbose_name='equipo')
-    points = models.CharField(choices=score_choices, verbose_name='puntaje')
+    points = models.IntegerField(choices=score_choices, verbose_name='puntaje')
 
     def __str__(self):
         return f'{self.team_id.name} - {self.points}'
