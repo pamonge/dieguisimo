@@ -69,8 +69,8 @@ class Score (models.Model):
         (1, 'd'),
         (0, 'l'),
     ]
-    tournament = models.ForeignKey(Tournament, verbose_name='torneo')
-    team_id = models.ForeignKey(Team, verbose_name='equipo')
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, verbose_name='torneo')
+    team_id = models.ForeignKey(Team, on_delete=models.CASCADE, verbose_name='equipo')
     points = models.IntegerField(choices=score_choices, verbose_name='puntaje')
 
     def __str__(self):
